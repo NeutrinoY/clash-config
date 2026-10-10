@@ -39,7 +39,7 @@ https://raw.githubusercontent.com/NeutrinoY/clash-config/main/multi-provider/Cus
 ## 文件域名规则
 
 - `rules/Download_Direct.yaml`：28 条后缀规则，覆盖 HF 文件 CDN、ModelScope、PyTorch、npm、Node、Anaconda、VS Code、NVIDIA/AMD/Intel 驱动、CUDA、Ollama/Civitai 专用文件存储和国内镜像。NVIDIA 驱动最终重定向域、AMD Adrenalin 和 Intel Arc 大型驱动均已按真实下载测试。
-- `rules/Bulk_Download.yaml`：42 条域名规则（以 `DOMAIN-SUFFIX` 为主，另含 GoFile、MediaFire、1fichier 的少量 `DOMAIN-WILDCARD`），覆盖 PyPI、Rust、GitHub 文件、Docker Layer、GHCR Blob、YouTube 视频分段、Proxmox ISO、Go Modules、Maven、JetBrains、NuGet、Discord 媒体、Telegram 可按域名识别的公开媒体、以及 MEGA/Google Drive/OneDrive/Dropbox 等网盘文件主机。YouTube `googlevideo.com` 和各宽泛 YouTube 规则之间按本模板的先命中顺序由 Bulk 接管。用户截图中的 `raw.kiko-play-niptan.one` 音频文件主机也列为 Bulk 候选；因 URL 截断，尚无同文件速度测试。
+- `rules/Bulk_Download.yaml`：43 条 classical 规则，其中 42 条域名规则（以 `DOMAIN-SUFFIX` 为主，另含 GoFile、MediaFire、1fichier 的少量 `DOMAIN-WILDCARD`）及一条 `GEOIP,telegram,no-resolve`。它覆盖 PyPI、Rust、GitHub 文件、Docker Layer、GHCR Blob、YouTube 视频分段、Proxmox ISO、Go Modules、Maven、JetBrains、NuGet、Discord 媒体、Telegram 可按域名识别的公开媒体、以及 MEGA/Google Drive/OneDrive/Dropbox 等网盘文件主机。Telegram IP 规则会把命中 `GeoIP: telegram` 的原生 Telegram 流量整体送入 Bulk，包含聊天、控制连接、通话和媒体，不能按内容类型拆分。YouTube `googlevideo.com` 和各宽泛 YouTube 规则之间按本模板的先命中顺序由 Bulk 接管。用户截图中的 `raw.kiko-play-niptan.one` 音频文件主机也列为 Bulk 候选；因 URL 截断，尚无同文件速度测试。
 
 规则结合真实下载结果与平台分发架构，大多数采用平台专用域名的 `DOMAIN-SUFFIX` 匹配；只对域名确实动态变化的文件服务器使用窄 `DOMAIN-WILDCARD`。新增网盘端点基于官方链路文档或明确标注的主机观察模式，路由命中规则本身不代表这些新端点的下载速度已经测试。
 
@@ -55,7 +55,7 @@ npm、NuGet、GHCR 等存在元数据、包文件或认证同域的情况，本�
 2. 私有地址与域名直连。
 3. `Download_Direct` 文件直连。
 4. 原 Aethersailor 补充直连规则。
-5. `Bulk_Download` 大流量出口。
+5. `Bulk_Download` 大流量出口，包括原生 Telegram 的 `GEOIP,telegram` 规则和文件域名规则。
 6. 原补充代理与 AI、GitHub、社交媒体等业务分类。
 7. 国内及最终兜底。
 

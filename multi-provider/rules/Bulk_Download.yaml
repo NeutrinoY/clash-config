@@ -24,6 +24,7 @@ payload:
   - DOMAIN-SUFFIX,cdn.discordapp.com # Discord附件
   - DOMAIN-SUFFIX,media.discordapp.net # Discord媒体
   - DOMAIN-SUFFIX,cdn-lfs.huggingface.co # HF历史LFS文件CDN
+  - GEOIP,telegram,no-resolve # 原生Telegram DC IP；按用户要求整类Telegram IP流量走Bulk，不区分聊天/通话/媒体
   - DOMAIN-SUFFIX,telegram-cdn.org # 当前GeoSite telegram列表成员；域名层候选，不代表原生MTProto DC
   - DOMAIN-SUFFIX,cdn-telegram.org # 当前GeoSite telegram列表成员；域名层候选，不代表原生MTProto DC
   - DOMAIN-SUFFIX,telesco.pe # Telegram公开频道视频消息网页/播放
