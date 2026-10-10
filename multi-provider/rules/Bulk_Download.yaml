@@ -1,0 +1,7 @@
+# 精选公共下载端点：只纳入可识别为文件分发的主机。
+# 不要将整个 GitHub、NVIDIA、npm、Hugging Face 站点直接纳入。
+# 已添加的是保守的初始样本；未来通过实际下载连接日志校正。
+payload:
+  - DOMAIN,files.pythonhosted.org
+  - DOMAIN,download.pytorch.org
+  - DOMAIN-SUFFIX,download.nvidia.com
