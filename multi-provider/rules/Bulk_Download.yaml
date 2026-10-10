@@ -12,6 +12,7 @@ payload:
   - DOMAIN-SUFFIX,pkg-containers.githubusercontent.com # GHCR实际镜像Blob主机
   - DOMAIN-SUFFIX,googlevideo.com # YouTube视频/音频分段，排在GEOSITE YouTube前
   - DOMAIN-SUFFIX,enterprise.proxmox.com # PVE ISO；DIRECT 1.31、Bulk 5.59 MB/s
+  - DOMAIN-SUFFIX,raw.kiko-play-niptan.one # 用户截图中的约32MiB音频文件主机；速度未实测，暂列Bulk候选
   - DOMAIN-SUFFIX,proxy.golang.org # Go Modules与自动工具链
   - DOMAIN-SUFFIX,repo.maven.apache.org # Maven Central
   - DOMAIN-SUFFIX,repo1.maven.org # Maven Central

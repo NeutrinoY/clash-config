@@ -39,7 +39,7 @@ https://raw.githubusercontent.com/NeutrinoY/clash-config/main/multi-provider/Cus
 ## 文件域名规则
 
 - `rules/Download_Direct.yaml`：28 条后缀规则，覆盖 HF 文件 CDN、ModelScope、PyTorch、npm、Node、Anaconda、VS Code、NVIDIA/AMD/Intel 驱动、CUDA、Ollama/Civitai 专用文件存储和国内镜像。NVIDIA 驱动最终重定向域、AMD Adrenalin 和 Intel Arc 大型驱动均已按真实下载测试。
-- `rules/Bulk_Download.yaml`：22 条后缀规则，覆盖 PyPI、Rust、GitHub 文件、Docker Layer、GHCR Blob、YouTube 视频分段、Proxmox ISO、Go Modules、Maven、JetBrains、NuGet、Discord 媒体等。YouTube `googlevideo.com` 和各宽泛 YouTube 规则之间按本模板的先命中顺序由 Bulk 接管。
+- `rules/Bulk_Download.yaml`：23 条后缀规则，覆盖 PyPI、Rust、GitHub 文件、Docker Layer、GHCR Blob、YouTube 视频分段、Proxmox ISO、Go Modules、Maven、JetBrains、NuGet、Discord 媒体等。YouTube `googlevideo.com` 和各宽泛 YouTube 规则之间按本模板的先命中顺序由 Bulk 接管。用户截图中的 `raw.kiko-play-niptan.one` 音频文件主机也列为 Bulk 候选；因 URL 截断，尚无同文件速度测试。
 
 规则结合真实下载结果与平台分发架构，采用平台专用域名的 `DOMAIN-SUFFIX` 匹配，不要求各地区子域逐个测速。
 
