@@ -1,7 +1,23 @@
-# 精选公共下载端点：只纳入可识别为文件分发的主机。
-# 不要将整个 GitHub、NVIDIA、npm、Hugging Face 站点直接纳入。
-# 已添加的是保守的初始样本；未来通过实际下载连接日志校正。
+# 平台专用域名优先采用后缀匹配；包括实测与架构推断端点。
+# 公开文件只维护平台专用域名，不覆盖整个共享云存储/CDN后缀。
 payload:
-  - DOMAIN,files.pythonhosted.org
-  - DOMAIN,download.pytorch.org
-  - DOMAIN-SUFFIX,download.nvidia.com
+  - DOMAIN-SUFFIX,files.pythonhosted.org # PyPI包文件
+  - DOMAIN-SUFFIX,static.rust-lang.org # Rust工具链
+  - DOMAIN-SUFFIX,static.crates.io # Rust文件入口
+  - DOMAIN-SUFFIX,cloudfront-static.crates.io # Rust文件CDN
+  - DOMAIN-SUFFIX,release-assets.githubusercontent.com # GitHub Release
+  - DOMAIN-SUFFIX,objects.githubusercontent.com # GitHub对象文件
+  - DOMAIN-SUFFIX,codeload.github.com # GitHub源码归档
+  - DOMAIN-SUFFIX,production.cloudfront.docker.com # Docker Layer
+  - DOMAIN-SUFFIX,proxy.golang.org # Go Modules与自动工具链
+  - DOMAIN-SUFFIX,repo.maven.apache.org # Maven Central
+  - DOMAIN-SUFFIX,repo1.maven.org # Maven Central
+  - DOMAIN-SUFFIX,download.jetbrains.com # JetBrains发行入口
+  - DOMAIN-SUFFIX,download-cdn.jetbrains.com # JetBrains文件CDN
+  - DOMAIN-SUFFIX,download.nvidia.com # NVIDIA驱动分发，包括us主机；已列DIRECT的developer主机优先
+  - DOMAIN-SUFFIX,api.nuget.org # NuGet包与元数据同域
+  - DOMAIN-SUFFIX,globalcdn.nuget.org # NuGet文件CDN
+  - DOMAIN-SUFFIX,ghcr.io # GHCR仓库入口及Blob流程
+  - DOMAIN-SUFFIX,cdn.discordapp.com # Discord附件
+  - DOMAIN-SUFFIX,media.discordapp.net # Discord媒体
+  - DOMAIN-SUFFIX,cdn-lfs.huggingface.co # HF历史LFS文件CDN

@@ -1,0 +1,27 @@
+# 平台专用域名优先采用后缀匹配；包括实测与架构推断端点。
+# 公开文件只维护平台专用域名，不覆盖整个共享云存储/CDN后缀。
+payload:
+  - DOMAIN-SUFFIX,cdn.hf.co # HF AWS/GCP文件CDN，覆盖美国、欧洲、亚洲区域子域
+  - DOMAIN-SUFFIX,cdn-lfs.hf.co # HF LFS文件CDN
+  - DOMAIN-SUFFIX,cdn-lfs-us-1.hf.co # HF美国LFS
+  - DOMAIN-SUFFIX,cdn-lfs-eu-1.hf.co # HF欧洲LFS
+  - DOMAIN-SUFFIX,transfer.xethub.hf.co # HF Xet文件传输
+  - DOMAIN-SUFFIX,transfer.xethub-eu.hf.co # HF欧洲Xet文件传输
+  - DOMAIN-SUFFIX,modelscope.cn # ModelScope国内平台与文件CDN
+  - DOMAIN-SUFFIX,modelscope.net # ModelScope国内相关资源
+  - DOMAIN-SUFFIX,download.pytorch.org # PyTorch Wheel
+  - DOMAIN-SUFFIX,registry.npmjs.org # npm公开包及同域registry
+  - DOMAIN-SUFFIX,nodejs.org # Node官方发行资源
+  - DOMAIN-SUFFIX,repo.anaconda.com # Anaconda官方文件
+  - DOMAIN-SUFFIX,dl.google.com # Google公共发行文件
+  - DOMAIN-SUFFIX,vscode.download.prss.microsoft.com # VSCode文件CDN
+  - DOMAIN-SUFFIX,developer.download.nvidia.com # CUDA包入口
+  - DOMAIN-SUFFIX,developer.download.nvidia.cn # CUDA国内文件CDN
+  - DOMAIN-SUFFIX,registry.ollama.ai # Ollama Manifest和Blob入口
+  - DOMAIN-SUFFIX,dd20bb891979d25aebc8bec07b2b3bbc.r2.cloudflarestorage.com # 已观察Ollama专用文件存储
+  - DOMAIN-SUFFIX,civitai.red # 用户模型完整直连链路
+  - DOMAIN-SUFFIX,civitai-delivery-worker-prod.5ac0637cfd0766c97916cefa3764fbdf.r2.cloudflarestorage.com # Civitai专用文件存储
+  - DOMAIN-SUFFIX,mirrors.tuna.tsinghua.edu.cn # TUNA
+  - DOMAIN-SUFFIX,mirrors.ustc.edu.cn # USTC
+  - DOMAIN-SUFFIX,mirrors.sjtug.sjtu.edu.cn # SJTUG
+  - DOMAIN-SUFFIX,mirrors.aliyun.com # 国内镜像

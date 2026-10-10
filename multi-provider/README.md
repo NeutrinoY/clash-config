@@ -1,51 +1,74 @@
-# 双供应商最小增量配置
+# 双提供商运行模板
 
-本目录是根目录 `Custom_Clash.ini` 的独立多供应商版本。**根目录原文件不变，Nikki 私有 Mixin 不变。**
+本目录是根目录 `Custom_Clash.ini` 的独立双提供商版本，供 SubConverter-Extended 生成 Mihomo/Nikki 配置。根目录旧模板保持不变。
 
-## 设计
+## 提供商与现有分组
 
-- `Premium`：日常主力（目前可由跑路云代测，以后换 MESL）；全部原有国家组、自动组和现有业务组的直接节点仅来自该来源。
-- `Bulk`：廉价大流量辅助；只进入 `📦 大流量下载`（手动组，含 Bulk 的具体节点及 Premium 备用）和 `📦 大流量自动`（仅 Bulk 节点测速）。下载规则自动指向前者，其余业务沿用旧分流。
-- 私有美国 ISP 节点及 `🛫 ISP前置` 继续由 Nikki Mixin 添加。Mixin 的前置规则优先于转换出的规则，适合保留身份敏感例外。**不要在两个位置定义同名策略组。**
+- `Premium`：现有主提供商（当前 NLoli 原始订阅，用户现有主力来源）。日常手动、自动、国家及业务组的直接节点只来自该来源。
+- `Bulk`：赔钱机场辅助来源，只进入 `📦 大流量下载` 和 `📦 大流量自动`。大流量下载默认首先提供 Bulk 自动组，可手动选择 Bulk 具体节点或主提供商备用。
+- 国内及适合直连的下载命中 `🎯 全球直连`；其他公共大文件命中大流量下载组；其余业务沿用现有分类。
 
-## 接入步骤（占位示例，禁止把真实 URL 推送到公开仓库）
+用户仍可手动选择香港、日本、新加坡、台湾或其他节点。提供商来源隔离不规定地区，也不新增亚洲策略组。
 
-先获得两条**可由 Mihomo 原生 proxy-provider 解析的 Clash/Mihomo YAML** 订阅链接。原始节点列表或 Base64 订阅不一定能被 Provider 直接读取，须在 Nikki 中核验实际 Provider 更新是否成功。
+美国 ISP 节点及 `🛫 ISP前置` 由 Nikki 私有 Mixin 添加。现有身份敏感和日本地区例外保留；Mixin 前置规则优先。模板引用 `🇺🇸 美国ISP出口`，因此生成结果应搭配已有 Mixin 使用，不能在两个位置重复定义同名组或节点。
+
+## 双订阅转换
+
+两条来源都应返回 Mihomo 可读取的 YAML。示例使用占位地址：
 
 ```text
-provider:Premium,tag:Premium,https://example.com/premium-clash.yaml|provider:Bulk,tag:Bulk,https://example.com/bulk-clash.yaml
+provider:Premium,tag:Premium,https://example.com/premium-meta.yaml|provider:Bulk,tag:Bulk,https://example.com/bulk-meta.yaml
 ```
 
-把整个字符串进行 URL 编码，作为 SubConverter-Extended 的 `url=`；使用 `target=clash`，将 `config=` 指向：
+把整个来源字符串 URL 编码后作为 SubConverter-Extended 的 `url=`，使用 `target=clash`，`config=` 指向：
 
 ```text
 https://raw.githubusercontent.com/NeutrinoY/clash-config/main/multi-provider/Custom_Clash_Multi.ini
 ```
 
-**必须保留固定标签 `Premium`、`Bulk`（区分大小写）。** 不要只拼两个未标记的 URL，也不要以节点名称或订阅源的排序替代标签。转换器支持来源标签 `tag:`、Provider 名称 `provider:` 和 `!!GROUP=` 筛选。
+保留固定的 `provider:` 名称和 `tag:` 标签 `Premium`、`Bulk`（区分大小写），模板用 `!!GROUP=^Premium$!!` 和 `!!GROUP=^Bulk$!!` 筛选来源，不按订阅排序或节点地区猜测。
 
-正式切换前，在生成的 YAML 核实：
+当前两来源格式核查：
 
-1. `proxy-providers` 下有两个来源，能成功更新、都有节点；若原始链接格式不兼容，请优先改用机场的 Clash/Mihomo YAML 订阅。
-2. `♻️ 自动选择`、六个国家组和旧业务组的直接节点只来自 Premium；`📦 大流量自动` 和 `📦 大流量下载` 的 Bulk 部分只来自 Bulk。
-3. `📦 大流量下载` 手动组默认选中 `📦 大流量自动`（或手动指定 Bulk 节点），而非误选 Premium 备用。
-4. Nikki Mixin 的 ISP 节点和 `🤖 AI服务` 等引用仍有效，且没有重复组名。
-5. 用 Mihomo 连接日志检查下方三类测试下载实际命中的规则和出口；不满足要求时先回退旧配置。
+- NLoli 的 `subType=meta&protocol=anytls` 返回 Mihomo YAML，可作 Premium Provider。
+- 赔钱机场原链接返回 Base64 节点列表；使用该来源的 `flag=meta` 格式作为 Bulk Provider。
+- 不使用该来源的 `flag=clash` 格式：本次仅返回少量 SS 节点，会缺失大量 VLESS/Hysteria2 节点。
 
-## 下载规则维护
+使用完整配置转换路径，不加 `list=true`。远程订阅由客户端更新；转换成功仍需核验实际 Provider 更新与节点连接。真实订阅 URL、token、ISP 凭据和生成结果只保存在用户本地，不提交仓库。
 
-`rules/Bulk_Download.yaml` 是目前的精选列表：PyPI wheel 文件域名、PyTorch 下载域名、NVIDIA 下载域名。规则位于原始的部分直连规则**之后**、海外业务规则**之前**，因此已命中的前置直连与 Nikki 更高优先级例外不被覆盖。
+## 文件域名规则
 
-增补规则时仅添加经过连接日志验证的**下载专用主机**；不要直接加入整个 `github.com`、`api.github.com`、`nvidia.com`、`huggingface.co` 等混合用途域名。
+- `rules/Download_Direct.yaml`：24 条后缀规则，覆盖 HF 文件 CDN、ModelScope、PyTorch、npm、Node、Anaconda、VS Code、CUDA、Ollama/Civitai 专用文件存储和国内镜像。
+- `rules/Bulk_Download.yaml`：20 条后缀规则，覆盖 PyPI、Rust、GitHub 文件、Docker Layer、Go Modules、Maven、JetBrains、NVIDIA 驱动、NuGet、GHCR、Discord 媒体等。
 
-GitHub API 的共享 IP 限额和登录、鉴权相关请求继续使用现有业务/ISP 出口。npm 的 `registry.npmjs.org` 同时承担元数据、包获取和可能的认证操作，Hugging Face 下载可能使用签名 URL，暂不整体交给 Bulk；待实测后再分别补充精确规则。**Mihomo 依据域名等规则识别，不会自动根据下载字节数切换出口。**
+规则结合真实下载结果与平台分发架构，采用平台专用域名的 `DOMAIN-SUFFIX` 匹配，不要求各地区子域逐个测速。
 
-更改规则文件后，等 Rule Provider 更新（当前配置 28800 秒间隔）或手动刷新 Provider；必要时重新生成配置并检查连接日志。
+HF 的 `cdn.hf.co` 覆盖 AWS/GCP 美国、欧洲、亚洲文件 CDN；官方 LFS 和 Xet 传输端点另列后缀。不把整个 `hf.co` 当文件域名，因为其中还有 Hub/协议接口。主站、GitHub API 等保留现有业务分类。
 
-## 安全与回退
+共享 R2 等存储只添加已识别的平台专用主机；不加入整个 `cloudflarestorage.com`、`amazonaws.com`、`cloudfront.net` 或 `storage.googleapis.com`。其他动态终点后续按平台用途补充。
 
-本目录禁止提交带 token 的订阅 URL、ISP 凭据或转换结果。公开转换服务也可能记录订阅 URL；敏感场景应自行部署转换器。
+npm、NuGet、GHCR 等存在元数据、包文件或认证同域的情况，本模板按整域选定出口；HTTPS 域名规则不能按 URL 路径自动拆开。固定来源需求可通过用户 Mixin 前置例外处理。
 
-当前提交只涉及 GitHub 中的静态文件，**未更新 Nikki、未使用真实订阅执行端到端验证**。旧版链接仍指向根目录 `Custom_Clash.ini`，需要回退时恢复旧链接即可。
+## 规则优先级
 
-参考：[SubConverter-Extended 来源标签](https://github.com/Aethersailor/SubConverter-Extended/wiki/Feature-Parameters) · [官方订阅说明](https://github.com/Aethersailor/SubConverter-Extended/wiki/Remote-Subscriptions) · [Mihomo Proxy Groups](https://wiki.metacubex.one/en/config/proxy-groups/)
+1. Nikki Mixin 的身份、地区及用户例外。
+2. 私有地址与域名直连。
+3. `Download_Direct` 文件直连。
+4. 原 Aethersailor 补充直连规则。
+5. `Bulk_Download` 大流量出口。
+6. 原补充代理与 AI、GitHub、社交媒体等业务分类。
+7. 国内及最终兜底。
+
+文件规则位于宽泛业务分类之前，避免模型文件误入 ISP、GitHub Release 误入日常出口。CUDA 开发文件精确后缀的 DIRECT 优先于较宽的 NVIDIA 驱动 Bulk 后缀。
+
+规则文件改动由 Rule Provider 更新或手动刷新生效；规则引用和组结构变动需要重新转换配置。当前两个文件规则的更新间隔为 28800 秒。
+
+## 导入检查与回退
+
+核对生成结果：有 `Premium`、`Bulk` 两个 Provider；主力组只引用 Premium；两个大流量组的直接来源只引用 Bulk；Nikki Mixin 的 ISP 及前置引用有效，无重复组名。
+
+用真实连接核对 DIRECT、Bulk 和身份例外。`url-test` 的 204 测速选择可达/低延迟节点，不代表持续下载最快。两来源节点是否适合具体服务还受实际节点连接、配额和地区影响。
+
+回退可恢复指向根目录旧 `Custom_Clash.ini` 的转换链接。仓库更新不会自动切换路由器订阅，运行配置由用户导入。
+
+参考：[SubConverter-Extended 来源参数](https://github.com/Aethersailor/SubConverter-Extended/wiki/Feature-Parameters) · [远程 Provider](https://github.com/Aethersailor/SubConverter-Extended/wiki/Remote-Subscriptions) · [HF 官方域名清单](https://huggingface.co/.well-known/meta.json)
