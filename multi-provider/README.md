@@ -38,8 +38,8 @@ https://raw.githubusercontent.com/NeutrinoY/clash-config/main/multi-provider/Cus
 
 ## 文件域名规则
 
-- `rules/Download_Direct.yaml`：24 条后缀规则，覆盖 HF 文件 CDN、ModelScope、PyTorch、npm、Node、Anaconda、VS Code、CUDA、Ollama/Civitai 专用文件存储和国内镜像。
-- `rules/Bulk_Download.yaml`：20 条后缀规则，覆盖 PyPI、Rust、GitHub 文件、Docker Layer、Go Modules、Maven、JetBrains、NVIDIA 驱动、NuGet、GHCR、Discord 媒体等。
+- `rules/Download_Direct.yaml`：28 条后缀规则，覆盖 HF 文件 CDN、ModelScope、PyTorch、npm、Node、Anaconda、VS Code、NVIDIA/AMD/Intel 驱动、CUDA、Ollama/Civitai 专用文件存储和国内镜像。NVIDIA 驱动最终重定向域、AMD Adrenalin 和 Intel Arc 大型驱动均已按真实下载测试。
+- `rules/Bulk_Download.yaml`：22 条后缀规则，覆盖 PyPI、Rust、GitHub 文件、Docker Layer、GHCR Blob、YouTube 视频分段、Proxmox ISO、Go Modules、Maven、JetBrains、NuGet、Discord 媒体等。YouTube `googlevideo.com` 和各宽泛 YouTube 规则之间按本模板的先命中顺序由 Bulk 接管。
 
 规则结合真实下载结果与平台分发架构，采用平台专用域名的 `DOMAIN-SUFFIX` 匹配，不要求各地区子域逐个测速。
 
@@ -59,7 +59,7 @@ npm、NuGet、GHCR 等存在元数据、包文件或认证同域的情况，本�
 6. 原补充代理与 AI、GitHub、社交媒体等业务分类。
 7. 国内及最终兜底。
 
-文件规则位于宽泛业务分类之前，避免模型文件误入 ISP、GitHub Release 误入日常出口。CUDA 开发文件精确后缀的 DIRECT 优先于较宽的 NVIDIA 驱动 Bulk 后缀。
+文件规则位于宽泛业务分类之前，避免模型文件误入 ISP、GitHub Release 误入日常出口。驱动域名仅按 NVIDIA、AMD、Intel 实际文件域处理，不把厂商门户或通用 CDN 一并改道。
 
 规则文件改动由 Rule Provider 更新或手动刷新生效；规则引用和组结构变动需要重新转换配置。当前两个文件规则的更新间隔为 28800 秒。
 

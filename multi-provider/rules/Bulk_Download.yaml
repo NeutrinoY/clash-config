@@ -9,12 +9,14 @@ payload:
   - DOMAIN-SUFFIX,objects.githubusercontent.com # GitHub对象文件
   - DOMAIN-SUFFIX,codeload.github.com # GitHub源码归档
   - DOMAIN-SUFFIX,production.cloudfront.docker.com # Docker Layer
+  - DOMAIN-SUFFIX,pkg-containers.githubusercontent.com # GHCR实际镜像Blob主机
+  - DOMAIN-SUFFIX,googlevideo.com # YouTube视频/音频分段，排在GEOSITE YouTube前
+  - DOMAIN-SUFFIX,enterprise.proxmox.com # PVE ISO；DIRECT 1.31、Bulk 5.59 MB/s
   - DOMAIN-SUFFIX,proxy.golang.org # Go Modules与自动工具链
   - DOMAIN-SUFFIX,repo.maven.apache.org # Maven Central
   - DOMAIN-SUFFIX,repo1.maven.org # Maven Central
   - DOMAIN-SUFFIX,download.jetbrains.com # JetBrains发行入口
   - DOMAIN-SUFFIX,download-cdn.jetbrains.com # JetBrains文件CDN
-  - DOMAIN-SUFFIX,download.nvidia.com # NVIDIA驱动分发，包括us主机；已列DIRECT的developer主机优先
   - DOMAIN-SUFFIX,api.nuget.org # NuGet包与元数据同域
   - DOMAIN-SUFFIX,globalcdn.nuget.org # NuGet文件CDN
   - DOMAIN-SUFFIX,ghcr.io # GHCR仓库入口及Blob流程

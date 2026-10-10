@@ -15,6 +15,10 @@ payload:
   - DOMAIN-SUFFIX,repo.anaconda.com # Anaconda官方文件
   - DOMAIN-SUFFIX,dl.google.com # Google公共发行文件
   - DOMAIN-SUFFIX,vscode.download.prss.microsoft.com # VSCode文件CDN
+  - DOMAIN-SUFFIX,download.nvidia.com # 实测驱动文件直连，覆盖地区子域
+  - DOMAIN-SUFFIX,download.nvidia.cn # 驱动跨区重定向终点实测可直连
+  - DOMAIN-SUFFIX,drivers.amd.com # 实测Adrenalin 26.9.2大型驱动包直连
+  - DOMAIN-SUFFIX,downloadmirror.intel.com # 实测Intel Arc大型驱动包直连
   - DOMAIN-SUFFIX,developer.download.nvidia.com # CUDA包入口
   - DOMAIN-SUFFIX,developer.download.nvidia.cn # CUDA国内文件CDN
   - DOMAIN-SUFFIX,registry.ollama.ai # Ollama Manifest和Blob入口
