@@ -39,9 +39,9 @@ https://raw.githubusercontent.com/NeutrinoY/clash-config/main/multi-provider/Cus
 ## 文件域名规则
 
 - `rules/Download_Direct.yaml`：28 条后缀规则，覆盖 HF 文件 CDN、ModelScope、PyTorch、npm、Node、Anaconda、VS Code、NVIDIA/AMD/Intel 驱动、CUDA、Ollama/Civitai 专用文件存储和国内镜像。NVIDIA 驱动最终重定向域、AMD Adrenalin 和 Intel Arc 大型驱动均已按真实下载测试。
-- `rules/Bulk_Download.yaml`：23 条后缀规则，覆盖 PyPI、Rust、GitHub 文件、Docker Layer、GHCR Blob、YouTube 视频分段、Proxmox ISO、Go Modules、Maven、JetBrains、NuGet、Discord 媒体等。YouTube `googlevideo.com` 和各宽泛 YouTube 规则之间按本模板的先命中顺序由 Bulk 接管。用户截图中的 `raw.kiko-play-niptan.one` 音频文件主机也列为 Bulk 候选；因 URL 截断，尚无同文件速度测试。
+- `rules/Bulk_Download.yaml`：42 条域名规则（以 `DOMAIN-SUFFIX` 为主，另含 GoFile、MediaFire、1fichier 的少量 `DOMAIN-WILDCARD`），覆盖 PyPI、Rust、GitHub 文件、Docker Layer、GHCR Blob、YouTube 视频分段、Proxmox ISO、Go Modules、Maven、JetBrains、NuGet、Discord 媒体、Telegram 可按域名识别的公开媒体、以及 MEGA/Google Drive/OneDrive/Dropbox 等网盘文件主机。YouTube `googlevideo.com` 和各宽泛 YouTube 规则之间按本模板的先命中顺序由 Bulk 接管。用户截图中的 `raw.kiko-play-niptan.one` 音频文件主机也列为 Bulk 候选；因 URL 截断，尚无同文件速度测试。
 
-规则结合真实下载结果与平台分发架构，采用平台专用域名的 `DOMAIN-SUFFIX` 匹配，不要求各地区子域逐个测速。
+规则结合真实下载结果与平台分发架构，大多数采用平台专用域名的 `DOMAIN-SUFFIX` 匹配；只对域名确实动态变化的文件服务器使用窄 `DOMAIN-WILDCARD`。新增网盘端点基于官方链路文档或明确标注的主机观察模式，路由命中规则本身不代表这些新端点的下载速度已经测试。
 
 HF 的 `cdn.hf.co` 覆盖 AWS/GCP 美国、欧洲、亚洲文件 CDN；官方 LFS 和 Xet 传输端点另列后缀。不把整个 `hf.co` 当文件域名，因为其中还有 Hub/协议接口。主站、GitHub API 等保留现有业务分类。
 

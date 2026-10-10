@@ -24,3 +24,22 @@ payload:
   - DOMAIN-SUFFIX,cdn.discordapp.com # Discord附件
   - DOMAIN-SUFFIX,media.discordapp.net # Discord媒体
   - DOMAIN-SUFFIX,cdn-lfs.huggingface.co # HF历史LFS文件CDN
+  - DOMAIN-SUFFIX,telegram-cdn.org # 当前GeoSite telegram列表成员；域名层候选，不代表原生MTProto DC
+  - DOMAIN-SUFFIX,cdn-telegram.org # 当前GeoSite telegram列表成员；域名层候选，不代表原生MTProto DC
+  - DOMAIN-SUFFIX,telesco.pe # Telegram公开频道视频消息网页/播放
+  - DOMAIN-SUFFIX,userstorage.mega.co.nz # MEGA动态文件传输主机；不覆盖mega.nz/API
+  - DOMAIN-SUFFIX,drive.usercontent.google.com # Google Drive专用浏览器文件下载主机；不覆盖通用googleusercontent/GCS
+  - DOMAIN-SUFFIX,files.1drv.com # OneDrive预授权文件下载主机；不覆盖OneDrive网页/API或SharePoint租户主机
+  - DOMAIN-SUFFIX,dropbox.com # Dropbox分享页可在同一主机承载下载，按服务域整体走Bulk
+  - DOMAIN-SUFFIX,dropboxusercontent.com # Dropbox文件内容主机
+  - DOMAIN-WILDCARD,cold*.gofile.io # GoFile文件存储主机模式（观察到cold1等）
+  - DOMAIN-WILDCARD,store*.gofile.io # GoFile文件存储主机模式（观察到storeN等）
+  - DOMAIN-WILDCARD,download*.mediafire.com # MediaFire动态文件下载主机（观察到download数字子域）
+  - DOMAIN-SUFFIX,pixeldrain.com # 文件与网页共用域名；免费额度按出口IP，超限可能降速
+  - DOMAIN-SUFFIX,pixeldrain.net # Pixeldrain官方备用域名
+  - DOMAIN-SUFFIX,pixeldra.in # Pixeldrain官方备用域名
+  - DOMAIN-SUFFIX,pixeldrain.nl # Pixeldrain官方备用域名
+  - DOMAIN-SUFFIX,pixeldrain.biz # Pixeldrain官方备用域名
+  - DOMAIN-SUFFIX,pixeldrain.tech # Pixeldrain官方备用域名
+  - DOMAIN-SUFFIX,pixeldrain.dev # Pixeldrain官方备用域名
+  - DOMAIN-WILDCARD,*-*.1fichier.com # 1fichier动态文件服务器主机（观察到a-N/o-N形式），避开api.1fichier.com
