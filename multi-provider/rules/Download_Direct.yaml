@@ -1,5 +1,5 @@
-# 平台专用域名优先采用后缀匹配；包括实测与架构推断端点。
-# 公开文件只维护平台专用域名，不覆盖整个共享云存储/CDN后缀。
+# 平台域名采用后缀匹配；共享存储仅列具体文件主机。
+# npm、Node.js、Ollama入口及civitai.red包含同域网页/API流量。
 payload:
   - DOMAIN-SUFFIX,cdn.hf.co # HF AWS/GCP文件CDN，覆盖美国、欧洲、亚洲区域子域
   - DOMAIN-SUFFIX,cdn-lfs.hf.co # HF LFS文件CDN
@@ -7,25 +7,15 @@ payload:
   - DOMAIN-SUFFIX,cdn-lfs-eu-1.hf.co # HF欧洲LFS
   - DOMAIN-SUFFIX,transfer.xethub.hf.co # HF Xet文件传输
   - DOMAIN-SUFFIX,transfer.xethub-eu.hf.co # HF欧洲Xet文件传输
-  - DOMAIN-SUFFIX,modelscope.cn # ModelScope国内平台与文件CDN
-  - DOMAIN-SUFFIX,modelscope.net # ModelScope国内相关资源
   - DOMAIN-SUFFIX,download.pytorch.org # PyTorch Wheel
+  - DOMAIN-SUFFIX,download-r2.pytorch.org # PyTorch C++ libtorch文件重定向终点
   - DOMAIN-SUFFIX,registry.npmjs.org # npm公开包及同域registry
   - DOMAIN-SUFFIX,nodejs.org # Node官方发行资源
-  - DOMAIN-SUFFIX,repo.anaconda.com # Anaconda官方文件
-  - DOMAIN-SUFFIX,dl.google.com # Google公共发行文件
   - DOMAIN-SUFFIX,vscode.download.prss.microsoft.com # VSCode文件CDN
-  - DOMAIN-SUFFIX,download.nvidia.com # 实测驱动文件直连，覆盖地区子域
-  - DOMAIN-SUFFIX,download.nvidia.cn # 驱动跨区重定向终点实测可直连
-  - DOMAIN-SUFFIX,drivers.amd.com # 实测Adrenalin 26.9.2大型驱动包直连
-  - DOMAIN-SUFFIX,downloadmirror.intel.com # 实测Intel Arc大型驱动包直连
-  - DOMAIN-SUFFIX,developer.download.nvidia.com # CUDA包入口
-  - DOMAIN-SUFFIX,developer.download.nvidia.cn # CUDA国内文件CDN
+  - DOMAIN-SUFFIX,download.nvidia.com # NVIDIA驱动与CUDA，含developer子域及地区子域
+  - DOMAIN-SUFFIX,download.nvidia.cn # NVIDIA驱动与CUDA国内文件，含developer子域
   - DOMAIN-SUFFIX,registry.ollama.ai # Ollama Manifest和Blob入口
   - DOMAIN-SUFFIX,dd20bb891979d25aebc8bec07b2b3bbc.r2.cloudflarestorage.com # 已观察Ollama专用文件存储
-  - DOMAIN-SUFFIX,civitai.red # 用户模型完整直连链路
+  - DOMAIN-SUFFIX,civitai.red # Civitai网页/API整域直连
+  - DOMAIN-SUFFIX,b2.civitai.com # Civitai模型文件，覆盖.com与.red的下载重定向
   - DOMAIN-SUFFIX,civitai-delivery-worker-prod.5ac0637cfd0766c97916cefa3764fbdf.r2.cloudflarestorage.com # Civitai专用文件存储
-  - DOMAIN-SUFFIX,mirrors.tuna.tsinghua.edu.cn # TUNA
-  - DOMAIN-SUFFIX,mirrors.ustc.edu.cn # USTC
-  - DOMAIN-SUFFIX,mirrors.sjtug.sjtu.edu.cn # SJTUG
-  - DOMAIN-SUFFIX,mirrors.aliyun.com # 国内镜像

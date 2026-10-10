@@ -1,5 +1,5 @@
-# 平台专用域名优先采用后缀匹配；包括实测与架构推断端点。
-# 公开文件只维护平台专用域名，不覆盖整个共享云存储/CDN后缀。
+# 平台域名采用后缀匹配；共享存储仅列具体文件主机。
+# Telegram 使用 IP 分类，须以 classical 类型加载此规则集。
 payload:
   - DOMAIN-SUFFIX,files.pythonhosted.org # PyPI包文件
   - DOMAIN-SUFFIX,static.rust-lang.org # Rust工具链
@@ -9,38 +9,13 @@ payload:
   - DOMAIN-SUFFIX,objects.githubusercontent.com # GitHub对象文件
   - DOMAIN-SUFFIX,codeload.github.com # GitHub源码归档
   - DOMAIN-SUFFIX,production.cloudfront.docker.com # Docker Layer
+  - DOMAIN-SUFFIX,production.cloudflare.docker.com # Docker Layer备用CDN
+  - DOMAIN-SUFFIX,docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com # Docker专用镜像层存储
   - DOMAIN-SUFFIX,pkg-containers.githubusercontent.com # GHCR实际镜像Blob主机
   - DOMAIN-SUFFIX,googlevideo.com # YouTube视频/音频分段，排在GEOSITE YouTube前
-  - DOMAIN-SUFFIX,enterprise.proxmox.com # PVE ISO；DIRECT 1.31、Bulk 5.59 MB/s
-  - DOMAIN-SUFFIX,raw.kiko-play-niptan.one # 用户截图中的约32MiB音频文件主机；速度未实测，暂列Bulk候选
-  - DOMAIN-SUFFIX,proxy.golang.org # Go Modules与自动工具链
-  - DOMAIN-SUFFIX,repo.maven.apache.org # Maven Central
-  - DOMAIN-SUFFIX,repo1.maven.org # Maven Central
-  - DOMAIN-SUFFIX,download.jetbrains.com # JetBrains发行入口
-  - DOMAIN-SUFFIX,download-cdn.jetbrains.com # JetBrains文件CDN
-  - DOMAIN-SUFFIX,api.nuget.org # NuGet包与元数据同域
-  - DOMAIN-SUFFIX,globalcdn.nuget.org # NuGet文件CDN
+  - DOMAIN-SUFFIX,kiko-play-niptan.one # 个人音频来源（主域及子域）
+  - DOMAIN-SUFFIX,proxy.golang.org # Go模块/工具链入口；大文件转向共享storage.googleapis.com后由后续规则处理
   - DOMAIN-SUFFIX,ghcr.io # GHCR仓库入口及Blob流程
-  - DOMAIN-SUFFIX,cdn.discordapp.com # Discord附件
-  - DOMAIN-SUFFIX,media.discordapp.net # Discord媒体
-  - DOMAIN-SUFFIX,cdn-lfs.huggingface.co # HF历史LFS文件CDN
   - GEOIP,telegram,no-resolve # 原生Telegram DC IP；按用户要求整类Telegram IP流量走Bulk，不区分聊天/通话/媒体
-  - DOMAIN-SUFFIX,telegram-cdn.org # 当前GeoSite telegram列表成员；域名层候选，不代表原生MTProto DC
-  - DOMAIN-SUFFIX,cdn-telegram.org # 当前GeoSite telegram列表成员；域名层候选，不代表原生MTProto DC
-  - DOMAIN-SUFFIX,telesco.pe # Telegram公开频道视频消息网页/播放
   - DOMAIN-SUFFIX,userstorage.mega.co.nz # MEGA动态文件传输主机；不覆盖mega.nz/API
   - DOMAIN-SUFFIX,drive.usercontent.google.com # Google Drive专用浏览器文件下载主机；不覆盖通用googleusercontent/GCS
-  - DOMAIN-SUFFIX,files.1drv.com # OneDrive预授权文件下载主机；不覆盖OneDrive网页/API或SharePoint租户主机
-  - DOMAIN-SUFFIX,dropbox.com # Dropbox分享页可在同一主机承载下载，按服务域整体走Bulk
-  - DOMAIN-SUFFIX,dropboxusercontent.com # Dropbox文件内容主机
-  - DOMAIN-WILDCARD,cold*.gofile.io # GoFile文件存储主机模式（观察到cold1等）
-  - DOMAIN-WILDCARD,store*.gofile.io # GoFile文件存储主机模式（观察到storeN等）
-  - DOMAIN-WILDCARD,download*.mediafire.com # MediaFire动态文件下载主机（观察到download数字子域）
-  - DOMAIN-SUFFIX,pixeldrain.com # 文件与网页共用域名；免费额度按出口IP，超限可能降速
-  - DOMAIN-SUFFIX,pixeldrain.net # Pixeldrain官方备用域名
-  - DOMAIN-SUFFIX,pixeldra.in # Pixeldrain官方备用域名
-  - DOMAIN-SUFFIX,pixeldrain.nl # Pixeldrain官方备用域名
-  - DOMAIN-SUFFIX,pixeldrain.biz # Pixeldrain官方备用域名
-  - DOMAIN-SUFFIX,pixeldrain.tech # Pixeldrain官方备用域名
-  - DOMAIN-SUFFIX,pixeldrain.dev # Pixeldrain官方备用域名
-  - DOMAIN-WILDCARD,*-*.1fichier.com # 1fichier动态文件服务器主机（观察到a-N/o-N形式），避开api.1fichier.com
