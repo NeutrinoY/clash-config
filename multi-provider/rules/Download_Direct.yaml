@@ -1,6 +1,6 @@
 # 平台域名采用后缀匹配；共享存储仅列具体文件主机。
 # npm、Node.js及Ollama入口包含同域网页/API流量。
-# Civitai仅接管文件主机，网页、登录和API由后续规则处理。
+# Civitai专用R2文件直连；B2由Bulk接管，网页、登录和API由后续规则处理。
 payload:
   - DOMAIN-SUFFIX,cdn.hf.co # HF AWS/GCP文件CDN，覆盖美国、欧洲、亚洲区域子域
   - DOMAIN-SUFFIX,cdn-lfs.hf.co # HF LFS文件CDN
@@ -17,5 +17,4 @@ payload:
   - DOMAIN-SUFFIX,download.nvidia.cn # NVIDIA驱动与CUDA国内文件，含developer子域
   - DOMAIN-SUFFIX,registry.ollama.ai # Ollama Manifest和Blob入口
   - DOMAIN-SUFFIX,dd20bb891979d25aebc8bec07b2b3bbc.r2.cloudflarestorage.com # 已观察Ollama专用文件存储
-  - DOMAIN-SUFFIX,b2.civitai.com # Civitai模型文件，覆盖.com与.red的下载重定向
   - DOMAIN-SUFFIX,civitai-delivery-worker-prod.5ac0637cfd0766c97916cefa3764fbdf.r2.cloudflarestorage.com # Civitai专用文件存储
