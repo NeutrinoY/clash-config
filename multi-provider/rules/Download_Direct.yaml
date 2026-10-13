@@ -1,6 +1,6 @@
 # 平台域名采用后缀匹配；共享存储仅列具体文件主机。
 # npm、Node.js及Ollama入口包含同域网页/API流量。
-# Civitai专用R2文件直连；B2由Bulk接管，网页、登录和API由后续规则处理。
+# Civitai专用R2文件直连；B2、网页、登录和API由后续规则处理。
 payload:
   - DOMAIN-SUFFIX,cdn.hf.co # HF AWS/GCP文件CDN，覆盖美国、欧洲、亚洲区域子域
   - DOMAIN-SUFFIX,cdn-lfs.hf.co # HF LFS文件CDN

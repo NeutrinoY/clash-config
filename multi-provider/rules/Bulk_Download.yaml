@@ -19,4 +19,3 @@ payload:
   - GEOIP,telegram,no-resolve # 原生Telegram DC IP；按用户要求整类Telegram IP流量走Bulk，不区分聊天/通话/媒体
   - DOMAIN-SUFFIX,userstorage.mega.co.nz # MEGA动态文件传输主机；不覆盖mega.nz/API
   - DOMAIN-SUFFIX,drive.usercontent.google.com # Google Drive专用浏览器文件下载主机；不覆盖通用googleusercontent/GCS
-  - DOMAIN-SUFFIX,b2.civitai.com # Civitai B2模型文件存储，走大流量下载
