@@ -24,7 +24,8 @@ BULK_TIERS = [("📦 0.01倍", r"0\.01倍"), ("📦 0.1倍", r"0\.1倍")]
 # 订阅里混着的信息条目，不是节点
 NOT_NODE = r"(?!.*(?:剩余流量|套餐到期|官网|过期时间))"
 
-ISP_GROUPS = {"🚀 手动选择", "🤖 ChatGPT", "🤖 AI服务"}
+ISP_FIRST = {"🤖 ChatGPT", "🤖 AI服务"}  # AI 默认走 ISP
+MANUAL = "🚀 手动选择"  # ISP 放在 ♻️ 自动选择 后面：随时能切，但默认不走
 AUTO = "♻️ 自动选择"
 # Bulk 只有这几个地区有节点；没有节点的地区不建组，空组在 mihomo 里会变成直连（COMPATIBLE）
 BULK_REGIONS = ["🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "🇼🇸 台湾节点"]
@@ -110,13 +111,16 @@ def patch(lines: list[str]) -> list[str]:
             hits["P2-premium"] += 1
 
         # P0：随时能让流量走美国静态 IP
-        if name in ISP_GROUPS:
+        if name in ISP_FIRST:
             f.insert(2, ISP)
+            hits["P0"] += 1
+        elif name == MANUAL:
+            f.insert(f.index(f"[]{AUTO}") + 1, ISP)
             hits["P0"] += 1
 
         out.append(PREFIX + "`".join(f))
 
-    expect = {"P0": len(ISP_GROUPS), "P1": 6, "P1-auto": 1, "P2-bulk": 1}
+    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-auto": 1, "P2-bulk": 1}
     bad = {k: (hits[k], v) for k, v in expect.items() if hits[k] != v}
     if bad or hits["P2-premium"] == 0:
         sys.exit(f"上游模板结构变了，补丁命中次数不对（实际, 期望）：{bad or hits}")
