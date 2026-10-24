@@ -31,6 +31,15 @@ GIA_REGIONS = {"🇭🇰 香港节点"}
 ISP_FIRST = {"🤖 ChatGPT", "🤖 AI服务"}  # AI 默认走 ISP
 MANUAL = "🚀 手动选择"  # ISP 放在 ♻️ 自动选择 后面：随时能切，但默认不走
 AUTO = "♻️ 自动选择"
+BULK_SELECT = "📦 大流量下载"
+
+# P3：下载分流规则集，插在 private 规则后面，抢在 GEOSITE（AI、GitHub 等）之前。规则内容在 rules/ 里。
+# 地址指向 main，不固定提交：规则集由 mihomo 自己拉取（不经过后端，没有模板那样的缓存问题），推送后一小时内生效。
+# 用 raw.githubusercontent 而不是 jsDelivr：jsDelivr 对 @main 最多缓存 12 小时。直连偶尔超时，拉不到时 mihomo 会继续用本地那份。
+P3_ANCHOR = "ruleset=🎯 全球直连,[]GEOIP,private,no-resolve"
+RULES_BASE = "https://raw.githubusercontent.com/NeutrinoY/clash-config/main/rules"
+DOWNLOAD_RULESETS = {"🎯 全球直连": "Download_Direct.yaml", BULK_SELECT: "Download_Bulk.yaml"}
+RULESET_INTERVAL = 3600
 
 
 def load(src: str) -> list[str]:
@@ -71,7 +80,7 @@ def clusters(lines: list[str]) -> dict[str, list[list[str]]]:
 def bulk_groups() -> list[str]:
     tiers = [name for name, _ in BULK_TIERS]
     groups = [
-        ["📦 大流量下载", "select", *[f"[]{t}" for t in tiers], f"[]{MANUAL}", f"{BULK}^{NOT_NODE}.*$"],
+        [BULK_SELECT, "select", *[f"[]{t}" for t in tiers], f"[]{MANUAL}", f"{BULK}^{NOT_NODE}.*$"],
         *[[name, "url-test", f"{BULK}^{NOT_NODE}(?=.*{pat}).*$", *TEST] for name, pat in BULK_TIERS],
     ]
     return [PREFIX + "`".join(g) for g in groups]
@@ -79,12 +88,19 @@ def bulk_groups() -> list[str]:
 
 def patch(lines: list[str]) -> list[str]:
     out: list[str] = []
-    hits = {"P0": 0, "P1": 0, "P1-sub": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0}
+    hits = {"P0": 0, "P1": 0, "P1-sub": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0, "P3": 0}
     cl = clusters(lines)
 
     for line in lines:
         if not line.startswith(PREFIX):
             out.append(line)
+            # P3：下载分流
+            if line == P3_ANCHOR:
+                out.extend(
+                    f"ruleset={group},clash-classic:{RULES_BASE}/{file},{RULESET_INTERVAL}"
+                    for group, file in DOWNLOAD_RULESETS.items()
+                )
+                hits["P3"] += 1
             continue
         f = line[len(PREFIX):].split("`")
         name, kind = f[0], f[1]
@@ -130,7 +146,7 @@ def patch(lines: list[str]) -> list[str]:
 
         out.append(PREFIX + "`".join(f))
 
-    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-sub": len(V6_REGIONS) + len(GIA_REGIONS), "P1-auto": 1, "P2-bulk": 1}
+    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-sub": len(V6_REGIONS) + len(GIA_REGIONS), "P1-auto": 1, "P2-bulk": 1, "P3": 1}
     bad = {k: (hits[k], v) for k, v in expect.items() if hits[k] != v}
     if bad or hits["P2-premium"] == 0 or hits["P1-ref"] == 0:
         sys.exit(f"上游模板结构变了，补丁命中次数不对（实际, 期望）：{bad or hits}")

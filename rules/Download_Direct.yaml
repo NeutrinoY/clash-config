@@ -1,0 +1,27 @@
+# 大文件下载：直连。mihomo 每小时从 main 拉取，改完推送即可，不用改订阅里的提交号。
+# 依据 2026-10-25 的实测：直连能跑满（单连接约 6 MB/s 封顶，8～16 线程和 Bulk 都在 25 MB/s 左右）。
+# 只放存文件的 CDN，网页和接口照上游规则走。
+payload:
+  # Hugging Face：老 LFS CDN、us.aws.cdn.hf.co 这类、Xet（huggingface.co 本身继续走 ISP）
+  - DOMAIN-SUFFIX,cdn.hf.co
+  - DOMAIN-SUFFIX,xethub.hf.co
+  - DOMAIN,cdn-lfs.hf.co
+  - DOMAIN,cdn-lfs-us-1.hf.co
+  - DOMAIN,cdn-lfs-eu-1.hf.co
+  - DOMAIN,cdn-lfs.huggingface.co
+  - DOMAIN,cdn-lfs-us-1.huggingface.co
+  # Cloudflare R2：Civitai 大模型、Ollama 等，地址里是存储桶和账号 ID
+  - DOMAIN-SUFFIX,r2.cloudflarestorage.com
+  - DOMAIN-SUFFIX,r2.dev
+  # asmr.one 的音频（raw / fast / large）
+  - DOMAIN-SUFFIX,kiko-play-niptan.one
+  - DOMAIN,download.nvidia.com
+  - DOMAIN,developer.download.nvidia.com
+  # 开发依赖（都有 v6）
+  - DOMAIN,files.pythonhosted.org
+  - DOMAIN,download.pytorch.org
+  - DOMAIN,registry.npmjs.org
+  - DOMAIN,nodejs.org
+  - DOMAIN,static.rust-lang.org
+  - DOMAIN,static.crates.io
+  - DOMAIN,index.crates.io

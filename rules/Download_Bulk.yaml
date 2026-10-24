@@ -1,0 +1,13 @@
+# 大文件下载：走 📦 大流量下载。mihomo 每小时从 main 拉取，改完推送即可，不用改订阅里的提交号。
+# 依据 2026-10-25 的实测：直连不通，或者明显比 Bulk 慢。
+payload:
+  # GitHub 的文件 CDN（直连单连接 1.6 MB/s、8 线程 5.5，Bulk 22）；ghcr 的镜像层也在这里
+  - DOMAIN,release-assets.githubusercontent.com
+  - DOMAIN,objects.githubusercontent.com
+  - DOMAIN,codeload.github.com
+  - DOMAIN,pkg-containers.githubusercontent.com
+  # Civitai 小文件（直连 TLS 被掐；大模型在 R2，走直连）
+  - DOMAIN,b2.civitai.com
+  # Docker Hub 的镜像层（直连不通）。registry-1 / auth 不放：匿名拉取按 IP 计次，Bulk 的 IP 太多人共用
+  - DOMAIN,production.cloudflare.docker.com
+  - DOMAIN,production.cloudfront.docker.com
