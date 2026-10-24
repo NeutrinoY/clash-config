@@ -30,10 +30,12 @@ uv run build.py path.ini   # 用本地的上游模板文件
 ```
 https://<SCE 后端>/sub?target=clash&emoji=true&add_emoji=true
   &url=provider:Premium,tag:Premium,<跑路云 nodelist 订阅>|provider:Bulk,tag:Bulk,<赔钱机场订阅>
-  &config=https://raw.githubusercontent.com/NeutrinoY/clash-config/main/Custom_Clash.ini
+  &config=https://raw.githubusercontent.com/NeutrinoY/clash-config/<提交号>/Custom_Clash.ini
 ```
 
 （`url` 和 `config` 需要 URL 编码。订阅链接里有 token，不要写进这个仓库。）
+
+`config` 固定指向某一次提交，不用 `main`：SCE 后端会按地址缓存模板，用 `main` 时推送以后很久都拿不到新版本，加查询参数也绕不过去。地址一变，后端必然重新拉取，跑的是哪个版本也一目了然。改模板以后，把订阅链接里的提交号换成新的。节点不受影响：Provider 模式下，节点由 mihomo 直接从机场拉。
 
 ## 已知问题
 
