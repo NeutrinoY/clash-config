@@ -19,7 +19,7 @@ TEST = ["https://www.gstatic.com/generate_204", "300,,50"]
 
 # Premium（跑路云）节点名里的倍率标记 [x]：x > 1 的节点不进任何自动组，只能手动选。没写倍率的按 1x。
 OVER_1X = r"\[(?:[2-9]|[1-9]\d|1\.0*[1-9])"
-# Bulk（赔钱机场）的倍率写法是「-0.1倍」「-0.01倍」。每档单独成组，低倍率组按 0.01 → 0.1 的顺序取第一个能用的
+# Bulk（赔钱机场）的倍率写法是「-0.1倍」「-0.01倍」。只按这两档分组：组在面板上是平铺的，多一个组就多一张卡片
 BULK_TIERS = [("📦 0.01倍", r"0\.01倍"), ("📦 0.1倍", r"0\.1倍")]
 # 订阅里混着的信息条目，不是节点
 NOT_NODE = r"(?!.*(?:剩余流量|套餐到期|官网|过期时间))"
@@ -27,8 +27,6 @@ NOT_NODE = r"(?!.*(?:剩余流量|套餐到期|官网|过期时间))"
 ISP_FIRST = {"🤖 ChatGPT", "🤖 AI服务"}  # AI 默认走 ISP
 MANUAL = "🚀 手动选择"  # ISP 放在 ♻️ 自动选择 后面：随时能切，但默认不走
 AUTO = "♻️ 自动选择"
-# Bulk 只有这几个地区有节点；没有节点的地区不建组，空组在 mihomo 里会变成直连（COMPATIBLE）
-BULK_REGIONS = ["🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "🇼🇸 台湾节点"]
 
 
 def load(src: str) -> list[str]:
@@ -45,40 +43,18 @@ def auto_name(region_group: str) -> str:
     return "⚡ " + region_group.split(" ", 1)[1].removesuffix("节点") + "自动"
 
 
-def region_regexes(lines: list[str]) -> dict[str, str]:
-    # 上游的地区组：name`url-test`(地区正则)`url`...
-    regs = {}
-    for line in lines:
-        if line.startswith(PREFIX):
-            f = line[len(PREFIX):].split("`")
-            if f[1] == "url-test" and f[0].endswith("节点"):
-                regs[f[0]] = f[2]
-    return regs
-
-
-def bulk_groups(regs: dict[str, str]) -> list[str]:
-    def short(region_group: str) -> str:
-        # "🇯🇵 日本节点" → "📦 日本"
-        return "📦 " + region_group.split(" ", 1)[1].removesuffix("节点")
-
-    regions = [short(r) for r in BULK_REGIONS]
+def bulk_groups() -> list[str]:
     tiers = [name for name, _ in BULK_TIERS]
     groups = [
-        ["📦 大流量下载", "select", "[]📦 低倍率", *[f"[]{t}" for t in tiers], "[]📦 大流量自动",
-         *[f"[]{r}" for r in regions], "[]🚀 手动选择", f"{BULK}^{NOT_NODE}.*$"],
-        ["📦 低倍率", "fallback", *[f"[]{t}" for t in tiers], *TEST],
+        ["📦 大流量下载", "select", *[f"[]{t}" for t in tiers], f"[]{MANUAL}", f"{BULK}^{NOT_NODE}.*$"],
         *[[name, "url-test", f"{BULK}^{NOT_NODE}(?=.*{pat}).*$", *TEST] for name, pat in BULK_TIERS],
-        ["📦 大流量自动", "url-test", f"{BULK}^{NOT_NODE}.*$", *TEST],
     ]
-    for r, name in zip(BULK_REGIONS, regions):
-        groups.append([name, "url-test", f"{BULK}^{NOT_NODE}(?=.*{regs[r]}).*$", *TEST])
     return [PREFIX + "`".join(g) for g in groups]
 
 
 def patch(lines: list[str]) -> list[str]:
     out: list[str] = []
     hits = {"P0": 0, "P1": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0}
-    regs = region_regexes(lines)
 
     for line in lines:
         if not line.startswith(PREFIX):
@@ -101,7 +77,7 @@ def patch(lines: list[str]) -> list[str]:
             out.append(PREFIX + "`".join(f))
             hits["P1-auto"] += 1
             # P2：Bulk 节点只进大流量下载组
-            out.extend(bulk_groups(regs))
+            out.extend(bulk_groups())
             hits["P2-bulk"] += 1
             continue
 
