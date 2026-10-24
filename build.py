@@ -26,6 +26,8 @@ NOT_NODE = r"(?!.*(?:剩余流量|套餐到期|官网|过期时间))"
 
 # 有 v6 线路（便宜，0.4～0.5x）的地区：多建一个 v6 自动组。没有节点的地区不建，空组在 mihomo 里会变成直连
 V6_REGIONS = {"🇭🇰 香港节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点"}
+# 有 GIA 线路（4～6x，几乎不断）的地区：多建一个 GIA 组，不限倍率。卡的时候手动切过去兜底
+GIA_REGIONS = {"🇭🇰 香港节点"}
 ISP_FIRST = {"🤖 ChatGPT", "🤖 AI服务"}  # AI 默认走 ISP
 MANUAL = "🚀 手动选择"  # ISP 放在 ♻️ 自动选择 后面：随时能切，但默认不走
 AUTO = "♻️ 自动选择"
@@ -47,7 +49,7 @@ def sub_name(region_group: str, suffix: str) -> str:
 
 
 def clusters(lines: list[str]) -> dict[str, list[list[str]]]:
-    """上游的地区组（name`url-test`地区正则`url`…）→ 取代它的聚类组：[X v6]、X自动，都只装 ≤1x 的节点。"""
+    """上游的地区组（name`url-test`地区正则`url`…）→ 取代它的聚类组：[X v6]、[X GIA]、X自动。GIA 组不限倍率，其余只装 ≤1x 的节点。"""
     out = {}
     for line in lines:
         if not line.startswith(PREFIX):
@@ -59,6 +61,8 @@ def clusters(lines: list[str]) -> dict[str, list[list[str]]]:
             groups = []
             if name in V6_REGIONS:
                 groups.append([sub_name(name, "v6"), "url-test", f"{PREMIUM}^(?=.*{region})(?=.*[vV]6)(?!.*{OVER_1X}).*$", *rest])
+            if name in GIA_REGIONS:
+                groups.append([sub_name(name, "GIA"), "url-test", f"{PREMIUM}^(?=.*{region})(?=.*GIA).*$", *rest])
             groups.append([sub_name(name, "自动"), "url-test", f"{PREMIUM}^(?=.*{region})(?!.*{OVER_1X}).*$", *rest])
             out[name] = groups
     return out
@@ -75,7 +79,7 @@ def bulk_groups() -> list[str]:
 
 def patch(lines: list[str]) -> list[str]:
     out: list[str] = []
-    hits = {"P0": 0, "P1": 0, "P1-v6": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0}
+    hits = {"P0": 0, "P1": 0, "P1-sub": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0}
     cl = clusters(lines)
 
     for line in lines:
@@ -89,7 +93,7 @@ def patch(lines: list[str]) -> list[str]:
         if name in cl:
             out.extend(PREFIX + "`".join(g) for g in cl[name])
             hits["P1"] += 1
-            hits["P1-v6"] += len(cl[name]) - 1
+            hits["P1-sub"] += len(cl[name]) - 1
             continue
 
         # 其他组里引用地区组的地方，直接列出它的聚类组
@@ -126,7 +130,7 @@ def patch(lines: list[str]) -> list[str]:
 
         out.append(PREFIX + "`".join(f))
 
-    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-v6": len(V6_REGIONS), "P1-auto": 1, "P2-bulk": 1}
+    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-sub": len(V6_REGIONS) + len(GIA_REGIONS), "P1-auto": 1, "P2-bulk": 1}
     bad = {k: (hits[k], v) for k, v in expect.items() if hits[k] != v}
     if bad or hits["P2-premium"] == 0 or hits["P1-ref"] == 0:
         sys.exit(f"上游模板结构变了，补丁命中次数不对（实际, 期望）：{bad or hits}")
