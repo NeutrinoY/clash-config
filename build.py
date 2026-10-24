@@ -46,6 +46,24 @@ def sub_name(region_group: str, suffix: str) -> str:
     return f"{flag} {rest.removesuffix('节点')}{suffix}"
 
 
+def clusters(lines: list[str]) -> dict[str, list[list[str]]]:
+    """上游的地区组（name`url-test`地区正则`url`…）→ 取代它的聚类组：[X v6]、X自动，都只装 ≤1x 的节点。"""
+    out = {}
+    for line in lines:
+        if not line.startswith(PREFIX):
+            continue
+        f = line[len(PREFIX):].split("`")
+        name, kind = f[0], f[1]
+        if kind == "url-test" and name.endswith("节点"):
+            region, rest = f[2], f[3:]
+            groups = []
+            if name in V6_REGIONS:
+                groups.append([sub_name(name, "v6"), "url-test", f"{PREMIUM}^(?=.*{region})(?=.*[vV]6)(?!.*{OVER_1X}).*$", *rest])
+            groups.append([sub_name(name, "自动"), "url-test", f"{PREMIUM}^(?=.*{region})(?!.*{OVER_1X}).*$", *rest])
+            out[name] = groups
+    return out
+
+
 def bulk_groups() -> list[str]:
     tiers = [name for name, _ in BULK_TIERS]
     groups = [
@@ -57,7 +75,8 @@ def bulk_groups() -> list[str]:
 
 def patch(lines: list[str]) -> list[str]:
     out: list[str] = []
-    hits = {"P0": 0, "P1": 0, "P1-v6": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0}
+    hits = {"P0": 0, "P1": 0, "P1-v6": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0}
+    cl = clusters(lines)
 
     for line in lines:
         if not line.startswith(PREFIX):
@@ -66,18 +85,22 @@ def patch(lines: list[str]) -> list[str]:
         f = line[len(PREFIX):].split("`")
         name, kind = f[0], f[1]
 
-        # P1：地区组 = select（[X v6] + X自动 + 该地区全部 Premium 节点）；自动组只装 ≤1x 的节点
-        if kind == "url-test" and name.endswith("节点"):
-            region = f[2]
-            auto, v6 = sub_name(name, "自动"), sub_name(name, "v6")
-            has_v6 = name in V6_REGIONS
-            out.append(PREFIX + "`".join([name, "select", *([f"[]{v6}"] if has_v6 else []), f"[]{auto}", PREMIUM + region]))
-            if has_v6:
-                out.append(PREFIX + "`".join([v6, "url-test", f"{PREMIUM}^(?=.*{region})(?=.*[vV]6)(?!.*{OVER_1X}).*$", *f[3:]]))
-            out.append(PREFIX + "`".join([auto, "url-test", f"{PREMIUM}^(?=.*{region})(?!.*{OVER_1X}).*$", *f[3:]]))
+        # P1：地区组换成聚类组（自动组的本质就是把节点聚成一类），不再套一层 select
+        if name in cl:
+            out.extend(PREFIX + "`".join(g) for g in cl[name])
             hits["P1"] += 1
-            hits["P1-v6"] += has_v6
+            hits["P1-v6"] += len(cl[name]) - 1
             continue
+
+        # 其他组里引用地区组的地方，直接列出它的聚类组
+        expanded = []
+        for m in f:
+            if m.startswith("[]") and m[2:] in cl:
+                expanded += [f"[]{g[0]}" for g in cl[m[2:]]]
+                hits["P1-ref"] += 1
+            else:
+                expanded.append(m)
+        f = expanded
 
         if name == AUTO and kind == "url-test":
             f[2] = f"{PREMIUM}^(?!.*{OVER_1X}).*$"
@@ -105,7 +128,7 @@ def patch(lines: list[str]) -> list[str]:
 
     expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-v6": len(V6_REGIONS), "P1-auto": 1, "P2-bulk": 1}
     bad = {k: (hits[k], v) for k, v in expect.items() if hits[k] != v}
-    if bad or hits["P2-premium"] == 0:
+    if bad or hits["P2-premium"] == 0 or hits["P1-ref"] == 0:
         sys.exit(f"上游模板结构变了，补丁命中次数不对（实际, 期望）：{bad or hits}")
     return out
 
