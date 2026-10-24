@@ -24,6 +24,8 @@ BULK_TIERS = [("📦 0.01倍", r"0\.01倍"), ("📦 0.1倍", r"0\.1倍")]
 # 订阅里混着的信息条目，不是节点
 NOT_NODE = r"(?!.*(?:剩余流量|套餐到期|官网|过期时间))"
 
+# 有 v6 线路（便宜，0.4～0.5x）的地区：多建一个 v6 自动组。没有节点的地区不建，空组在 mihomo 里会变成直连
+V6_REGIONS = {"🇭🇰 香港节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点"}
 ISP_FIRST = {"🤖 ChatGPT", "🤖 AI服务"}  # AI 默认走 ISP
 MANUAL = "🚀 手动选择"  # ISP 放在 ♻️ 自动选择 后面：随时能切，但默认不走
 AUTO = "♻️ 自动选择"
@@ -38,9 +40,10 @@ def load(src: str) -> list[str]:
     return text.splitlines()
 
 
-def auto_name(region_group: str) -> str:
-    # "🇭🇰 香港节点" → "⚡ 香港自动"
-    return "⚡ " + region_group.split(" ", 1)[1].removesuffix("节点") + "自动"
+def sub_name(region_group: str, suffix: str) -> str:
+    # ("🇭🇰 香港节点", "自动") → "🇭🇰 香港自动"
+    flag, rest = region_group.split(" ", 1)
+    return f"{flag} {rest.removesuffix('节点')}{suffix}"
 
 
 def bulk_groups() -> list[str]:
@@ -54,7 +57,7 @@ def bulk_groups() -> list[str]:
 
 def patch(lines: list[str]) -> list[str]:
     out: list[str] = []
-    hits = {"P0": 0, "P1": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0}
+    hits = {"P0": 0, "P1": 0, "P1-v6": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0}
 
     for line in lines:
         if not line.startswith(PREFIX):
@@ -63,13 +66,17 @@ def patch(lines: list[str]) -> list[str]:
         f = line[len(PREFIX):].split("`")
         name, kind = f[0], f[1]
 
-        # P1：地区组 = select（⚡X自动 + 该地区全部 Premium 节点）；⚡X自动 只装 ≤1x 的节点
+        # P1：地区组 = select（[X v6] + X自动 + 该地区全部 Premium 节点）；自动组只装 ≤1x 的节点
         if kind == "url-test" and name.endswith("节点"):
             region = f[2]
-            auto = auto_name(name)
-            out.append(PREFIX + "`".join([name, "select", f"[]{auto}", PREMIUM + region]))
+            auto, v6 = sub_name(name, "自动"), sub_name(name, "v6")
+            has_v6 = name in V6_REGIONS
+            out.append(PREFIX + "`".join([name, "select", *([f"[]{v6}"] if has_v6 else []), f"[]{auto}", PREMIUM + region]))
+            if has_v6:
+                out.append(PREFIX + "`".join([v6, "url-test", f"{PREMIUM}^(?=.*{region})(?=.*[vV]6)(?!.*{OVER_1X}).*$", *f[3:]]))
             out.append(PREFIX + "`".join([auto, "url-test", f"{PREMIUM}^(?=.*{region})(?!.*{OVER_1X}).*$", *f[3:]]))
             hits["P1"] += 1
+            hits["P1-v6"] += has_v6
             continue
 
         if name == AUTO and kind == "url-test":
@@ -96,7 +103,7 @@ def patch(lines: list[str]) -> list[str]:
 
         out.append(PREFIX + "`".join(f))
 
-    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-auto": 1, "P2-bulk": 1}
+    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-v6": len(V6_REGIONS), "P1-auto": 1, "P2-bulk": 1}
     bad = {k: (hits[k], v) for k, v in expect.items() if hits[k] != v}
     if bad or hits["P2-premium"] == 0:
         sys.exit(f"上游模板结构变了，补丁命中次数不对（实际, 期望）：{bad or hits}")
