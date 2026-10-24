@@ -48,3 +48,5 @@ https://<SCE 后端>/sub?target=clash&emoji=true&add_emoji=true
 2026-10-24（`6d0548f`）：地区 select 去掉后一共 43 个组；`🚀 手动选择` 依次是 自动选择 → ISP → 10 个聚类组 → 单个节点；AI 出口 `161.77.142.144`（US）。
 
 2026-10-24（`a9a0b91`）：asailor 后端生成 → 路由器 nikki 加载。Premium 105 个、Bulk 70 个节点；v6 组：香港 4 个、日本 6 个、新加坡 3 个；地区自动组：香港 15、日本 17、台湾 21、新加坡 7、美国 6、韩国 3；Bulk：0.01倍 5 个、0.1倍 30 个；`🚀 手动选择` 默认 `♻️ 自动选择`，AI 组默认 ISP。
+
+2026-10-25（`7b9f1fb`）：asailor 后端生成的配置里有 `Download_Direct`、`Download_Bulk` 两个规则集（classical / yaml / 3600），位置在 private 后面、上游规则集前面，组数 42 不变。路由器加载后规则集 19 / 7 条（刚重启时第一次拉取失败，手动更新后正常）。实际命中：PyPI、C 站 R2、HF CDN → DIRECT，GitHub Release → 📦 0.01倍。DreamShaper（R2）用 AB Download Manager 16 线程下载：上线前 2.4 MB/s，上线后 50～53 MB/s。
