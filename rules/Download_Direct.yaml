@@ -17,9 +17,7 @@ payload:
   - DOMAIN-SUFFIX,kiko-play-niptan.one
   - DOMAIN,download.nvidia.com
   - DOMAIN,developer.download.nvidia.com
-  # 开发依赖（都有 v6）
-  - DOMAIN,files.pythonhosted.org
-  - DOMAIN,download.pytorch.org
+  # 开发依赖（都有 v6）。pythonhosted 和 pytorch 的大 wheel 在 Download_Bulk
   - DOMAIN,registry.npmjs.org
   - DOMAIN,nodejs.org
   - DOMAIN,static.rust-lang.org

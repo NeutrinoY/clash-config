@@ -8,6 +8,9 @@ payload:
   - DOMAIN,pkg-containers.githubusercontent.com
   # Civitai 小文件（直连 TLS 被掐；大模型在 R2，走直连）
   - DOMAIN,b2.civitai.com
+  # PyPI / PyTorch 的大 wheel（cudnn、cublas、torch 动辄几百 MB）。pip 单连接，直连实测 0.3～1.5 MB/s 且抖动大
+  - DOMAIN,files.pythonhosted.org
+  - DOMAIN,download.pytorch.org
   # Docker Hub 的镜像层（直连不通）。registry-1 / auth 不放：匿名拉取按 IP 计次，Bulk 的 IP 太多人共用
   - DOMAIN,production.cloudflare.docker.com
   - DOMAIN,production.cloudfront.docker.com
