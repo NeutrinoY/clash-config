@@ -17,6 +17,9 @@ payload:
   - DOMAIN-SUFFIX,kiko-play-niptan.one
   - DOMAIN,download.nvidia.com
   - DOMAIN,developer.download.nvidia.com
+  # Ubuntu 官方源（jp.archive 之类的国家镜像、security）。2026-10-30 落到漏网之鱼 → 新加坡v6，约 1.2 MB/s 且偶发连接失败
+  - DOMAIN-SUFFIX,archive.ubuntu.com
+  - DOMAIN,security.ubuntu.com
   # 开发依赖（都有 v6）。pythonhosted 和 pytorch 的大 wheel 在 Download_Bulk
   - DOMAIN,registry.npmjs.org
   - DOMAIN,nodejs.org
