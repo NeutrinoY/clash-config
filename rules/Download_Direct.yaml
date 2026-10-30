@@ -13,6 +13,8 @@ payload:
   # Cloudflare R2：Civitai 大模型、Ollama 等，地址里是存储桶和账号 ID
   - DOMAIN-SUFFIX,r2.cloudflarestorage.com
   - DOMAIN-SUFFIX,r2.dev
+  # PyTorch 的 wheel 实际在这里（download.pytorch.org 只给索引，再跳转过来），是 R2 的自定义域名，上面两条匹配不到
+  - DOMAIN,download-r2.pytorch.org
   # asmr.one 的音频（raw / fast / large）
   - DOMAIN-SUFFIX,kiko-play-niptan.one
   - DOMAIN,download.nvidia.com
