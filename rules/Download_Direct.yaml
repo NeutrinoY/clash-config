@@ -19,6 +19,9 @@ payload:
   - DOMAIN-SUFFIX,kiko-play-niptan.one
   - DOMAIN,download.nvidia.com
   - DOMAIN,developer.download.nvidia.com
+  # 驱动、NVIDIA App 的下载（Akamai）。直连时会 301 到官方中国站 international-gfe.download.nvidia.cn（GeoSite cn 本来就直连）。
+  # 2026-11-05 实测：原先落到漏网之鱼 → 新加坡v6 2.5 MB/s，直连 6～7.7 MB/s
+  - DOMAIN,international-gfe.download.nvidia.com
   # LM Studio 无界面服务端 llmster 的安装包（Cloudflare）。原先命中 category-ai-!cn → AI服务 → ISP 出口，约 0.4 MB/s 还挤占 Claude
   - DOMAIN,llmster.lmstudio.ai
   # Codex App 的安装包和运行时更新（每次约 500MB，Cloudflare，没有国内节点）。原先命中 openai → ChatGPT → ISP 出口，
