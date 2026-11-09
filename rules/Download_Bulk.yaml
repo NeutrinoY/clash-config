@@ -13,6 +13,9 @@ payload:
   - DOMAIN,download.pytorch.org
   # NVIDIA 的 CUDA 运行库 wheel（nvidia-*-cu13 之类）
   - DOMAIN,pypi.nvidia.com
+  # Codex 命令行的安装包（Cloudflare）。原先命中 openai → ChatGPT → ISP 出口，2026-11-09 实测：ISP 2.2 MB/s；
+  # 直连 v4 / v6 都被 Cloudflare 回 403（不给国内 IP 下）；Bulk 两档都在 5.3～5.8（LAX）。公开的包，下载不带登录信息
+  - DOMAIN,releases.openai.com
   # Docker Hub 的镜像层（直连不通）。registry-1 / auth 不放：匿名拉取按 IP 计次，Bulk 的 IP 太多人共用
   - DOMAIN,production.cloudflare.docker.com
   - DOMAIN,production.cloudfront.docker.com

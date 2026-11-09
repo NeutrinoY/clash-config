@@ -27,6 +27,12 @@ payload:
   # Codex App 的安装包和运行时更新（每次约 500MB，Cloudflare，没有国内节点）。原先命中 openai → ChatGPT → ISP 出口，
   # 2026-11-05 实测：走 ISP 2.3 MB/s（BOS），直连 6.6 MB/s（HKG，v4、v6 一样）。只放这一个域名，ChatGPT 的其余域名照旧走 ISP
   - DOMAIN,persistent.oaistatic.com
+  # uv 下载的 Python（python-build-standalone 的镜像，Cloudflare）。原先落到漏网之鱼 → Premium，
+  # 2026-11-09 实测：Premium 2.4 MB/s，直连 v4 / v6 都在 5.6～5.8（HKG）
+  - DOMAIN,releases.astral.sh
+  # Google Cloud Storage 上的公开文件（Chrome for Testing 之类）。原先命中谷歌服务 → Premium，
+  # 2026-11-09 实测：Premium 2.4 MB/s，直连 v6 5.4～6.0，v4 一次 1.9、一次 5.4
+  - DOMAIN,storage.googleapis.com
   # Ubuntu 官方源（jp.archive 之类的国家镜像、security）。2026-10-30 落到漏网之鱼 → 新加坡v6，约 1.2 MB/s 且偶发连接失败
   - DOMAIN-SUFFIX,archive.ubuntu.com
   - DOMAIN,security.ubuntu.com
