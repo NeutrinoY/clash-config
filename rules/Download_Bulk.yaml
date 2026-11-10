@@ -6,8 +6,10 @@ payload:
   - DOMAIN,objects.githubusercontent.com
   - DOMAIN,codeload.github.com
   - DOMAIN,pkg-containers.githubusercontent.com
-  # Civitai 小文件（直连 TLS 被掐；大模型在 R2，走直连）
+  # Civitai 存在 B2 上的文件（Cloudflare 前置，直连 v4 / v6 的 TLS 握手都被重置；放在 R2 上的大模型走直连）。
+  # b2-large 原先命中 gfw → 手动选择 → Premium，只有 164 kB/s（2026-11-11）
   - DOMAIN,b2.civitai.com
+  - DOMAIN,b2-large.civitai.com
   # PyPI / PyTorch 的大 wheel（cudnn、cublas、torch 动辄几百 MB）。pip 单连接，直连实测 0.3～1.5 MB/s 且抖动大
   - DOMAIN,files.pythonhosted.org
   - DOMAIN,download.pytorch.org
