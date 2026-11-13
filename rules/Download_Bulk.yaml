@@ -21,6 +21,8 @@ payload:
   # Docker Hub 的镜像层（直连不通）。registry-1 / auth 不放：匿名拉取按 IP 计次，Bulk 的 IP 太多人共用
   - DOMAIN,production.cloudflare.docker.com
   - DOMAIN,production.cloudfront.docker.com
-  # Google Drive 的文件主机（gdown、浏览器下载都从这里出）。原先命中 google → 谷歌服务 → 手动选择 → Premium，
-  # 节点限速约 2 MB/s（2026-11-14）。只放文件主机；drive.google.com 的页面和接口照上游规则走
+  # Google Drive 的文件下载：drive.usercontent.google.com 是入口，会跳转到 doc-XX-XX-docs.googleusercontent.com 才真正传数据，
+  # 两个都要放。原先命中 google → 谷歌服务 → 手动选择 → Premium，节点限速约 2 MB/s（2026-11-14 在连接表里确认）。
+  # drive.google.com 的页面和接口照上游规则走
   - DOMAIN,drive.usercontent.google.com
+  - DOMAIN-SUFFIX,docs.googleusercontent.com
