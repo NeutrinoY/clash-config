@@ -25,4 +25,4 @@ payload:
   # 两个都要放。原先命中 google → 谷歌服务 → 手动选择 → Premium，节点限速约 2 MB/s（2026-11-14 在连接表里确认）。
   # drive.google.com 的页面和接口照上游规则走
   - DOMAIN,drive.usercontent.google.com
-  - DOMAIN-SUFFIX,docs.googleusercontent.com
+  - DOMAIN-REGEX,^doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com$
