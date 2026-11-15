@@ -10,6 +10,8 @@ payload:
   # b2-large 原先命中 gfw → 手动选择 → Premium，只有 164 kB/s（2026-11-11）
   - DOMAIN,b2.civitai.com
   - DOMAIN,b2-large.civitai.com
+  # 生成内容的 blob 文件；2026-11-16 正确 IP 上的 v4 / v6 TLS 都被重置，Bulk 能正常取得公开文件
+  - DOMAIN,blobs-b2.civitai.com
   # PyPI / PyTorch 的大 wheel（cudnn、cublas、torch 动辄几百 MB）。pip 单连接，直连实测 0.3～1.5 MB/s 且抖动大
   - DOMAIN,files.pythonhosted.org
   - DOMAIN,download.pytorch.org

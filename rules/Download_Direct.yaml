@@ -17,6 +17,11 @@ payload:
   - DOMAIN,download-r2.pytorch.org
   # asmr.one 的音频（raw / fast / large）
   - DOMAIN-SUFFIX,kiko-play-niptan.one
+  # Wasabi 上的公开文件；2026-11-16 两轮 100 MB 直连 5.3～5.4 MB/s，与 Bulk 接近
+  - DOMAIN,r18dotdev.s3.eu-west-1.wasabisys.com
+  # 图片与视频 CDN。recent.design 的实际视频文件直连正常；acg.lol 已验证首页、TLS 和校园网出口，图片吞吐未测
+  - DOMAIN,image.acg.lol
+  - DOMAIN,cdn.recent.design
   - DOMAIN,download.nvidia.com
   - DOMAIN,developer.download.nvidia.com
   # 驱动、NVIDIA App 的下载（Akamai）。直连时会 301 到官方中国站 international-gfe.download.nvidia.cn（GeoSite cn 本来就直连）。
@@ -24,9 +29,13 @@ payload:
   - DOMAIN,international-gfe.download.nvidia.com
   # LM Studio 无界面服务端 llmster 的安装包（Cloudflare）。原先命中 category-ai-!cn → AI服务 → ISP 出口，约 0.4 MB/s 还挤占 Claude
   - DOMAIN,llmster.lmstudio.ai
+  # LM Studio 的运行时包；2026-11-16 v4 / v6 各 100 MB 直连 5.8～5.9 MB/s，与 Bulk 接近
+  - DOMAIN,extensions.lmstudio.ai
   # Codex App 的安装包和运行时更新（每次约 500MB，Cloudflare，没有国内节点）。原先命中 openai → ChatGPT → ISP 出口，
   # 2026-11-05 实测：走 ISP 2.3 MB/s（BOS），直连 6.6 MB/s（HKG，v4、v6 一样）。只放这一个域名，ChatGPT 的其余域名照旧走 ISP
   - DOMAIN,persistent.oaistatic.com
+  # Claude Code 的公开安装包；2026-11-16 v6 两轮 100 MB 直连 5.9～6.5 MB/s，v4 超时。聊天与遥测照原规则走
+  - DOMAIN,downloads.claude.ai
   # uv 下载的 Python（python-build-standalone 的镜像，Cloudflare）。原先落到漏网之鱼 → Premium，
   # 2026-11-09 实测：Premium 2.4 MB/s，直连 v4 / v6 都在 5.6～5.8（HKG）
   - DOMAIN,releases.astral.sh
@@ -36,6 +45,8 @@ payload:
   # Ubuntu 官方源（jp.archive 之类的国家镜像、security）。2026-10-30 落到漏网之鱼 → 新加坡v6，约 1.2 MB/s 且偶发连接失败
   - DOMAIN-SUFFIX,archive.ubuntu.com
   - DOMAIN,security.ubuntu.com
+  # Ubuntu 的 ISO 下载；2026-11-16 v4 / v6 各 100 MB 直连 5.2～5.3 MB/s，与 Bulk 接近
+  - DOMAIN,releases.ubuntu.com
   # 开发依赖（都有 v6）。pythonhosted 和 pytorch 的大 wheel 在 Download_Bulk
   - DOMAIN,registry.npmjs.org
   - DOMAIN,nodejs.org
