@@ -22,6 +22,20 @@ payload:
   # 图片与视频 CDN。recent.design 的实际视频文件直连正常；acg.lol 已验证首页、TLS 和校园网出口，图片吞吐未测
   - DOMAIN,image.acg.lol
   - DOMAIN,cdn.recent.design
+  # JetBrains 安装包和插件文件；2026-11-17 实际文件直连约 4.5～6.5 MB/s，与 Bulk 接近
+  - DOMAIN,download-cdn.jetbrains.com
+  - DOMAIN,downloads.marketplace.jetbrains.com
+  # Epic EOS SDK 的公开 ZIP；重新取得有效签名后，v4 / v6 直连均约 6 MB/s
+  - DOMAIN,eos-sdk-releases.on.epicgames.com
+  # GitHub Desktop 安装包；两轮 100 MB 直连 4.45、5.70 MB/s
+  - DOMAIN,desktop.githubusercontent.com
+  # SourceForge 已测的两个文件镜像。netactuate 四轮直连 4.93～5.70 MB/s，zenlayer 另一次 5.91 MB/s；Bulk 也有波动
+  - DOMAIN,zenlayer.dl.sourceforge.net
+  - DOMAIN,netactuate.dl.sourceforge.net
+  # Zotero、MusicBrainz Picard 和 MobaXterm 的公开安装包；2026-11-17 实际文件直连正常，MobaXterm 复测与 Bulk 接近
+  - DOMAIN,download.zotero.org
+  - DOMAIN,data.musicbrainz.org
+  - DOMAIN,download.mobatek.net
   - DOMAIN,download.nvidia.com
   - DOMAIN,developer.download.nvidia.com
   # 驱动、NVIDIA App 的下载（Akamai）。直连时会 301 到官方中国站 international-gfe.download.nvidia.cn（GeoSite cn 本来就直连）。
@@ -31,6 +45,9 @@ payload:
   - DOMAIN,llmster.lmstudio.ai
   # LM Studio 的运行时包；2026-11-16 v4 / v6 各 100 MB 直连 5.8～5.9 MB/s，与 Bulk 接近
   - DOMAIN,extensions.lmstudio.ai
+  # LM Studio 自动更新和新版安装包；2026-11-17 各 100 MB，v4 / v6 直连约 5.9～6.4 MB/s
+  - DOMAIN,updates.lmstudio.ai
+  - DOMAIN,installers.lmstudio.ai
   # Codex App 的安装包和运行时更新（每次约 500MB，Cloudflare，没有国内节点）。原先命中 openai → ChatGPT → ISP 出口，
   # 2026-11-05 实测：走 ISP 2.3 MB/s（BOS），直连 6.6 MB/s（HKG，v4、v6 一样）。只放这一个域名，ChatGPT 的其余域名照旧走 ISP
   - DOMAIN,persistent.oaistatic.com
