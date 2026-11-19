@@ -24,6 +24,9 @@ BULK_TIERS = [("📦 0.01倍", r"0\.01倍"), ("📦 0.1倍", r"0\.1倍")]
 # 订阅里混着的信息条目，不是节点
 NOT_NODE = r"(?!.*(?:剩余流量|套餐到期|官网|过期时间))"
 
+# Premium 里没有节点的地区：一个组都不建，引用它的地方也去掉。空组在 mihomo 里会变成直连。
+# 美国：Premium 订阅只取 anytls 节点（2026-11-19 起），美国的节点全是 ss / vless
+EMPTY_REGIONS = {"🇺🇸 美国节点"}
 # 有 v6 线路（便宜，0.4～0.5x）的地区：多建一个 v6 自动组。没有节点的地区不建，空组在 mihomo 里会变成直连
 V6_REGIONS = {"🇭🇰 香港节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点"}
 # 有 GIA 线路（4～6x，几乎不断）的地区：多建一个 GIA 组，不限倍率。卡的时候手动切过去兜底
@@ -68,6 +71,9 @@ def clusters(lines: list[str]) -> dict[str, list[list[str]]]:
         if kind == "url-test" and name.endswith("节点"):
             region, rest = f[2], f[3:]
             groups = []
+            if name in EMPTY_REGIONS:
+                out[name] = groups
+                continue
             if name in V6_REGIONS:
                 groups.append([sub_name(name, "v6"), "url-test", f"{PREMIUM}^(?=.*{region})(?=.*[vV]6)(?!.*{OVER_1X}).*$", *rest])
             if name in GIA_REGIONS:
@@ -88,7 +94,7 @@ def bulk_groups() -> list[str]:
 
 def patch(lines: list[str]) -> list[str]:
     out: list[str] = []
-    hits = {"P0": 0, "P1": 0, "P1-sub": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0, "P3": 0}
+    hits = {"P0": 0, "P1": 0, "P1-groups": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0, "P3": 0}
     cl = clusters(lines)
 
     for line in lines:
@@ -109,7 +115,7 @@ def patch(lines: list[str]) -> list[str]:
         if name in cl:
             out.extend(PREFIX + "`".join(g) for g in cl[name])
             hits["P1"] += 1
-            hits["P1-sub"] += len(cl[name]) - 1
+            hits["P1-groups"] += len(cl[name])
             continue
 
         # 其他组里引用地区组的地方，直接列出它的聚类组
@@ -146,7 +152,8 @@ def patch(lines: list[str]) -> list[str]:
 
         out.append(PREFIX + "`".join(f))
 
-    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-sub": len(V6_REGIONS) + len(GIA_REGIONS), "P1-auto": 1, "P2-bulk": 1, "P3": 1}
+    groups = 6 - len(EMPTY_REGIONS) + len(V6_REGIONS) + len(GIA_REGIONS)
+    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-groups": groups, "P1-auto": 1, "P2-bulk": 1, "P3": 1}
     bad = {k: (hits[k], v) for k, v in expect.items() if hits[k] != v}
     if bad or hits["P2-premium"] == 0 or hits["P1-ref"] == 0:
         sys.exit(f"上游模板结构变了，补丁命中次数不对（实际, 期望）：{bad or hits}")
