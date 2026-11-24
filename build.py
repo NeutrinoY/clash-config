@@ -35,6 +35,8 @@ ISP_FIRST = {"🤖 ChatGPT", "🤖 AI服务"}  # AI 默认走 ISP
 MANUAL = "🚀 手动选择"  # ISP 放在 ♻️ 自动选择 后面：随时能切，但默认不走
 AUTO = "♻️ 自动选择"
 BULK_SELECT = "📦 大流量下载"
+# P4：大流量的媒体组可以切到 Bulk。放在第一个成员，新建时默认就走 Bulk；Premium 的节点照样留着，随时能切回去
+BULK_FIRST = {"📹 YouTube"}
 
 # P3：下载分流规则集，插在 private 规则后面，抢在 GEOSITE（AI、GitHub 等）之前。规则内容在 rules/ 里。
 # 地址指向 main，不固定提交：规则集由 mihomo 自己拉取（不经过后端，没有模板那样的缓存问题），推送后一小时内生效。
@@ -94,7 +96,7 @@ def bulk_groups() -> list[str]:
 
 def patch(lines: list[str]) -> list[str]:
     out: list[str] = []
-    hits = {"P0": 0, "P1": 0, "P1-groups": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0, "P3": 0}
+    hits = {"P0": 0, "P1": 0, "P1-groups": 0, "P1-ref": 0, "P1-auto": 0, "P2-premium": 0, "P2-bulk": 0, "P3": 0, "P4": 0}
     cl = clusters(lines)
 
     for line in lines:
@@ -150,10 +152,14 @@ def patch(lines: list[str]) -> list[str]:
             f.insert(f.index(f"[]{AUTO}") + 1, ISP)
             hits["P0"] += 1
 
+        if name in BULK_FIRST:
+            f.insert(2, f"[]{BULK_SELECT}")
+            hits["P4"] += 1
+
         out.append(PREFIX + "`".join(f))
 
     groups = 6 - len(EMPTY_REGIONS) + len(V6_REGIONS) + len(GIA_REGIONS)
-    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-groups": groups, "P1-auto": 1, "P2-bulk": 1, "P3": 1}
+    expect = {"P0": len(ISP_FIRST) + 1, "P1": 6, "P1-groups": groups, "P1-auto": 1, "P2-bulk": 1, "P3": 1, "P4": len(BULK_FIRST)}
     bad = {k: (hits[k], v) for k, v in expect.items() if hits[k] != v}
     if bad or hits["P2-premium"] == 0 or hits["P1-ref"] == 0:
         sys.exit(f"上游模板结构变了，补丁命中次数不对（实际, 期望）：{bad or hits}")
