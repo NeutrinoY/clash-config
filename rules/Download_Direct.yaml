@@ -59,6 +59,21 @@ payload:
   - DOMAIN,security.ubuntu.com
   # Ubuntu 的 ISO 下载；2026-11-16 v4 / v6 各 100 MB 直连 5.2～5.3 MB/s，与 Bulk 接近
   - DOMAIN,releases.ubuntu.com
+  # OCCT 安装包（Cloudflare）；2026-11-24 100 MB 直连 v4 6.4、v6 5.2 MB/s，原先落到漏网之鱼 → Premium
+  - DOMAIN,www.ocbase.com
+  # 几个桌面工具的安装包和自动更新（CC Switch、YASB、Seelen 在 Cloudflare 上；O&O 只有 v4）。
+  # 2026-11-24 v4 / v6 握手都正常，没测吞吐；原先落到漏网之鱼 → Premium
+  - DOMAIN,dl.ccswitch.io
+  - DOMAIN,downloads.yasb.dev
+  - DOMAIN,storage.seelen.io
+  - DOMAIN,package.oo-software.com
+  # Chrome 和 Google 组件的更新包；2026-11-24 v4 / v6 握手正常，没测吞吐。
+  # 同是 Google 的 storage.googleapis.com 实际用起来直连很慢，这条要是也慢，就跟它一起挪到 Bulk
+  - DOMAIN,edgedl.me.gvt1.com
+  # 电脑上某个程序直接用 IP 走明文 HTTP 下大文件（nginx，只开 80 端口，嗅探认不出域名，原先落到漏网之鱼 → Premium），
+  # 2026-11-19 前后五天约 3.5 GB。IPXO 转租给 Edgevana 的东京地址，只见到 .201～.207；2026-11-24 直连 80 端口握手正常。
+  # 是哪个程序没查出来。no-resolve：不让域名连接为了匹配这条去本地解析
+  - IP-CIDR,206.206.82.200/29,no-resolve
   # 开发依赖（都有 v6）。pythonhosted 和 pytorch 的大 wheel 在 Download_Bulk
   - DOMAIN,registry.npmjs.org
   - DOMAIN,nodejs.org
